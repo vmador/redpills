@@ -1,10 +1,10 @@
-const CACHE_NAME = 'Redpills-pwa-cache-v2';
+const CACHE_NAME = 'redpills-pwa-cache-v2';
 const urlsToCache = [
-    '/redpills/',
-    '/redpills/index.html',
-    '/redpills/manifest.json',
-    '/redpills/icon-192x192.png',
-    '/redpills/icon-512x512.png'
+    '/',
+    '/index.html',
+    '/manifest.json',
+    '/icon-192x192.png',
+    '/icon-512x512.png'
 ];
 
 self.addEventListener('install', (event) => {
