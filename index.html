@@ -26,58 +26,22 @@
       top: 0;
       left: 0;
       width: 100vw;
-      /* Usar dvh (Dynamic Viewport Height) como primera opción */
-      height: 100dvh;
+      height: 100vh;
       border: none;
       background-color: #000;
     }
     
-    /* Fallback para navegadores que no soportan dvh */
-    @supports not (height: 100dvh) {
+    /* Usar dvh (Dynamic Viewport Height) para Safari que lo soporte */
+    @supports (height: 100dvh) {
       iframe {
-        height: 100vh;
+        height: 100dvh;
       }
     }
     
-    /* Fix específico para Safari iOS */
-    @supports (-webkit-touch-callout: none) {
-      html, body {
-        height: 100vh !important;
-        height: 100dvh !important;
-        max-height: 100vh !important;
-        max-height: 100dvh !important;
-        min-height: 100vh !important;
-        min-height: 100dvh !important;
-        overflow: hidden !important;
-      }
-      
-      iframe {
-        /* Usar svh (Small Viewport Height) para Safari */
-        height: 100svh !important;
-      }
-    }
-    
-    /* Fix adicional para Safari en PWA - NO aplicar corrección */
+    /* En PWA usar siempre 100vh sin correcciones */
     @media all and (display-mode: standalone) {
       iframe {
         height: 100vh !important;
-      }
-    }
-    
-    /* Fix para cuando Safari está en modo pantalla completa - SOLO si NO es PWA */
-    @media screen and (orientation: portrait) and (display-mode: browser) {
-      @supports (-webkit-touch-callout: none) {
-        iframe {
-          height: calc(100vh - env(safe-area-inset-bottom)) !important;
-        }
-      }
-    }
-    
-    @media screen and (orientation: landscape) {
-      @supports (-webkit-touch-callout: none) {
-        iframe {
-          height: 100vh !important;
-        }
       }
     }
   </style>
@@ -96,36 +60,6 @@
       iframe?.contentWindow.postMessage(message, "https://redpills.framer.website/");
     }
     
-    // Fix dinámico para Safari - SOLO en navegador, NO en PWA
-    function fixSafariViewport() {
-      const iframe = document.getElementById("framerContent");
-      if (!iframe) return;
-      
-      // Detectar Safari iOS
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
-      
-      // SOLO aplicar fix si es Safari iOS y NO es PWA
-      if (isSafari && isIOS && !isPWA) {
-        // Calcular altura real disponible
-        const viewportHeight = window.innerHeight;
-        iframe.style.height = `${viewportHeight}px`;
-        
-        // Escuchar cambios en el viewport
-        window.addEventListener('resize', () => {
-          iframe.style.height = `${window.innerHeight}px`;
-        });
-        
-        // Escuchar cambios de orientación
-        window.addEventListener('orientationchange', () => {
-          setTimeout(() => {
-            iframe.style.height = `${window.innerHeight}px`;
-          }, 100);
-        });
-      }
-    }
-    
     window.addEventListener("message", function(event) {
       if (event.origin !== "https://redpills.framer.website/") return;
       if (event.data.type === "setSessionData") {
@@ -140,9 +74,6 @@
     });
     
     window.addEventListener("load", function() {
-      // Aplicar fix para Safari
-      fixSafariViewport();
-      
       const sessionData = localStorage.getItem("sessionData");
       if (sessionData) {
         sendMessageToIframe({
