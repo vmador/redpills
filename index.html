@@ -27,9 +27,19 @@
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100lvh;
+      height: 100vh; /* ← clave: usamos vh, no lvh */
       border: none;
       background-color: #000;
+    }
+
+    /* iOS PWA FIX: asegura que no quede espacio en iPhones */
+    @supports (-webkit-touch-callout: none) {
+      html, body, iframe {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        min-height: 100vh !important;
+        overflow: hidden !important;
+      }
     }
   </style>
 </head>
