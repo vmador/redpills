@@ -20,6 +20,16 @@
       overflow: hidden;
       height: 100%;
       touch-action: manipulation; /* Previene zoom en toques dobles */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-text-size-adjust: none;
+      -moz-text-size-adjust: none;
+      -ms-text-size-adjust: none;
+      text-size-adjust: none;
     }
     iframe {
       position: fixed;
@@ -30,6 +40,9 @@
       border: none;
       background-color: #000;
       touch-action: manipulation; /* Previene zoom en el iframe también */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
     
     /* Solo para Safari navegador (no PWA): usar viewport dinámico */
@@ -87,6 +100,33 @@
       if ("serviceWorker" in navigator) {
         navigator.serviceWorker.register("/service-worker.js").catch(() => {});
       }
+      
+      // Prevenir zoom con JavaScript adicional
+      document.addEventListener('gesturestart', function(e) {
+        e.preventDefault();
+      });
+      
+      document.addEventListener('gesturechange', function(e) {
+        e.preventDefault();
+      });
+      
+      document.addEventListener('gestureend', function(e) {
+        e.preventDefault();
+      });
+      
+      // Prevenir zoom con rueda del mouse
+      document.addEventListener('wheel', function(e) {
+        if (e.ctrlKey) {
+          e.preventDefault();
+        }
+      }, { passive: false });
+      
+      // Prevenir zoom con teclas
+      document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '0')) {
+          e.preventDefault();
+        }
+      });
     });
     document.addEventListener("visibilitychange", function() {
       if (!document.hidden) {
