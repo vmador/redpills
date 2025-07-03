@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Redpills</title>
   <meta name="description" content="Discover new interactive stories" />
   <meta name="theme-color" content="#000000" />
@@ -19,6 +19,7 @@
       background-color: #000;
       overflow: hidden;
       height: 100%;
+      touch-action: manipulation; /* Previene zoom en toques dobles */
     }
     iframe {
       position: fixed;
@@ -28,6 +29,7 @@
       height: 100vh; /* ← clave: usamos vh, no lvh */
       border: none;
       background-color: #000;
+      touch-action: manipulation; /* Previene zoom en el iframe también */
     }
     
     /* Solo para Safari navegador (no PWA): usar viewport dinámico */
