@@ -20,15 +20,33 @@
       overflow: hidden;
       height: 100%;
     }
-    
     iframe {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100vh;
+      height: 100vh; /* ← clave: usamos vh, no lvh */
       border: none;
       background-color: #000;
+    }
+    
+    /* Solo para Safari navegador (no PWA): usar viewport dinámico */
+    @supports (-webkit-touch-callout: none) {
+      @media not all and (display-mode: standalone) {
+        iframe {
+          height: 100dvh;
+        }
+      }
+    }
+    
+    /* iOS PWA FIX: asegura que no quede espacio en iPhones */
+    @supports (-webkit-touch-callout: none) {
+      html, body, iframe {
+        height: 100vh !important;
+        max-height: 100vh !important;
+        min-height: 100vh !important;
+        overflow: hidden !important;
+      }
     }
   </style>
 </head>
@@ -39,27 +57,11 @@
     allowfullscreen
     allow="geolocation; camera; microphone; storage-access"
   ></iframe>
-  
   <script>
     function sendMessageToIframe(message) {
       const iframe = document.getElementById("framerContent");
       iframe?.contentWindow.postMessage(message, "https://redpills.framer.website/");
     }
-    
-    // Ajustar altura solo para Safari navegador (no PWA)
-    function adjustForSafari() {
-      const iframe = document.getElementById("framerContent");
-      if (!iframe) return;
-      
-      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
-      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-      
-      // Solo ajustar si es Safari navegador (no PWA)
-      if (isSafari && !isPWA) {
-        iframe.style.height = `${window.innerHeight}px`;
-      }
-    }
-    
     window.addEventListener("message", function(event) {
       if (event.origin !== "https://redpills.framer.website/") return;
       if (event.data.type === "setSessionData") {
@@ -72,10 +74,7 @@
         });
       }
     });
-    
     window.addEventListener("load", function() {
-      adjustForSafari();
-      
       const sessionData = localStorage.getItem("sessionData");
       if (sessionData) {
         sendMessageToIframe({
@@ -87,13 +86,6 @@
         navigator.serviceWorker.register("/service-worker.js").catch(() => {});
       }
     });
-    
-    // Ajustar cuando cambie el viewport
-    window.addEventListener("resize", adjustForSafari);
-    window.addEventListener("orientationchange", () => {
-      setTimeout(adjustForSafari, 100);
-    });
-    
     document.addEventListener("visibilitychange", function() {
       if (!document.hidden) {
         const sessionData = localStorage.getItem("sessionData");
