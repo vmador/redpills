@@ -57,15 +57,15 @@
       }
     }
     
-    /* Fix adicional para Safari en PWA */
+    /* Fix adicional para Safari en PWA - NO aplicar corrección */
     @media all and (display-mode: standalone) {
       iframe {
         height: 100vh !important;
       }
     }
     
-    /* Fix para cuando Safari está en modo pantalla completa */
-    @media screen and (orientation: portrait) {
+    /* Fix para cuando Safari está en modo pantalla completa - SOLO si NO es PWA */
+    @media screen and (orientation: portrait) and (display-mode: browser) {
       @supports (-webkit-touch-callout: none) {
         iframe {
           height: calc(100vh - env(safe-area-inset-bottom)) !important;
@@ -96,7 +96,7 @@
       iframe?.contentWindow.postMessage(message, "https://redpills.framer.website/");
     }
     
-    // Fix dinámico para Safari
+    // Fix dinámico para Safari - SOLO en navegador, NO en PWA
     function fixSafariViewport() {
       const iframe = document.getElementById("framerContent");
       if (!iframe) return;
@@ -104,8 +104,10 @@
       // Detectar Safari iOS
       const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isPWA = window.matchMedia('(display-mode: standalone)').matches;
       
-      if (isSafari && isIOS) {
+      // SOLO aplicar fix si es Safari iOS y NO es PWA
+      if (isSafari && isIOS && !isPWA) {
         // Calcular altura real disponible
         const viewportHeight = window.innerHeight;
         iframe.style.height = `${viewportHeight}px`;
