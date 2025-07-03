@@ -18,7 +18,7 @@
       background-color: #000;
     }
 
-    /* --- NAVEGADOR --- */
+    /* NAVEGADOR: scroll permitido */
     body.browser {
       overflow: auto;
       -webkit-overflow-scrolling: touch;
@@ -27,11 +27,12 @@
     body.browser iframe {
       display: block;
       width: 100vw;
-      height: 100dvh; /* cambia con scroll, ideal para ocultar barras */
+      height: calc(100dvh - env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
       border: none;
     }
 
-    /* --- PWA --- */
+    /* PWA instalada */
     body.standalone {
       overflow: hidden;
     }
@@ -41,15 +42,15 @@
       top: 0;
       left: 0;
       width: 100vw;
-      height: 100lvh; /* pantalla completa */
+      height: 100lvh;
       border: none;
     }
 
-    /* Soporte para safe-area en iOS */
     @supports (padding: max(0px)) {
       body.browser iframe {
         padding-top: env(safe-area-inset-top);
-        height: calc(100dvh - env(safe-area-inset-top));
+        height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+        padding-bottom: env(safe-area-inset-bottom);
       }
 
       body.standalone iframe {
